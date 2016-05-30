@@ -25,6 +25,9 @@ namespace Practica4DSCC
         //Objetos de interface gráfica GLIDE
         private GHI.Glide.Display.Window iniciarWindow;
         private Button btn_inicio;
+        private bool activeInternet = false;
+        HttpRequest request;
+        GT.Timer timerRest;
 
         // This method is run when the mainboard is powered up or reset.   
         void ProgramStarted()
@@ -45,17 +48,53 @@ namespace Practica4DSCC
 
             // Use Debug.Print to show messages in Visual Studio's "Output" window during debugging.
             Debug.Print("Program Started");
-
+            this.timerRest = new GT.Timer(20000);
+            this.timerRest.Tick += timerRest_Tick;
+            request = HttpHelper.CreateHttpGetRequest("http://api.thingspeak.com/channels/120875/field/1/last");
+            request.ResponseReceived += request_ResponseReceived;
             //Carga la ventana principal
             iniciarWindow = GlideLoader.LoadWindow(Resources.GetString(Resources.StringResources.inicioWindow));
             GlideTouch.Initialize();
+
             initialize_ethernet();
+
+            ethernetJ11D.NetworkUp += ethernetJ11D_NetworkUp;
+            ethernetJ11D.NetworkDown += ethernetJ11D_NetworkDown;
             //Inicializa el boton en la interface
             btn_inicio = (Button)iniciarWindow.GetChildByName("button_iniciar");
+            btn_inicio.Enabled = false;
             btn_inicio.TapEvent += btn_inicio_TapEvent;
 
             //Selecciona iniciarWindow como la ventana de inicio
             Glide.MainWindow = iniciarWindow;
+        }
+
+        void timerRest_Tick(GT.Timer timer)
+        {
+            
+        }
+
+        void request_ResponseReceived(HttpRequest sender, HttpResponse response)
+        {
+            this.btn_inicio.Text = response.Text;
+        }
+
+        void ethernetJ11D_NetworkUp(GTM.Module.NetworkModule sender, GTM.Module.NetworkModule.NetworkState state)
+        {
+            Debug.Print("entra ethernetJ11D_NetworkUp");
+            //initialize_ethernet();
+            this.activeInternet = true;
+            this.btn_inicio.Enabled = true;
+            //this.iniciarWindow.
+            //TextBlock text = (TextBlock)controlWindow.GetChildByName("status");
+            this.btn_inicio.Text = ethernetJ11D.NetworkSettings.IPAddress;
+        }
+
+        void ethernetJ11D_NetworkDown(GTM.Module.NetworkModule sender, GTM.Module.NetworkModule.NetworkState state)
+        {
+            Debug.Print("no entra ethernetJ11D_NetworkDown");
+            this.activeInternet = false;
+            this.btn_inicio.Enabled = true;
         }
 
         void initialize_ethernet()
