@@ -49,13 +49,20 @@ namespace Practica4DSCC
             //Carga la ventana principal
             iniciarWindow = GlideLoader.LoadWindow(Resources.GetString(Resources.StringResources.inicioWindow));
             GlideTouch.Initialize();
-
+            initialize_ethernet();
             //Inicializa el boton en la interface
             btn_inicio = (Button)iniciarWindow.GetChildByName("button_iniciar");
             btn_inicio.TapEvent += btn_inicio_TapEvent;
 
             //Selecciona iniciarWindow como la ventana de inicio
             Glide.MainWindow = iniciarWindow;
+        }
+
+        void initialize_ethernet()
+        {
+            ethernetJ11D.NetworkInterface.Open();
+            ethernetJ11D.NetworkInterface.EnableDhcp();
+            ethernetJ11D.UseThisNetworkInterface();
         }
 
         void btn_inicio_TapEvent(object sender)
