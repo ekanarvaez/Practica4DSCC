@@ -24,6 +24,7 @@ namespace Practica4DSCC
     {
         //Objetos de interface gráfica GLIDE
         private GHI.Glide.Display.Window iniciarWindow;
+        private GHI.Glide.Display.Window pantalla;
         private Button btn_inicio;
         HttpRequest request;
         GT.Timer timerRest;
@@ -53,6 +54,7 @@ namespace Practica4DSCC
             request.ResponseReceived += request_ResponseReceived;
             //Carga la ventana principal
             iniciarWindow = GlideLoader.LoadWindow(Resources.GetString(Resources.StringResources.inicioWindow));
+            pantalla = GlideLoader.LoadWindow(Resources.GetString(Resources.StringResources.pantalla));
             GlideTouch.Initialize();
 
             initialize_ethernet();
@@ -70,12 +72,18 @@ namespace Practica4DSCC
 
         void timerRest_Tick(GT.Timer timer)
         {
+            Debug.Print("Hola");
             request.SendRequest();
         }
 
         void request_ResponseReceived(HttpRequest sender, HttpResponse response)
         {
-            this.btn_inicio.Text = response.Text;
+            String temp = response.Text;
+            TextBlock text = (TextBlock)this.pantalla.GetChildByName("txtTitulo");
+            Slider slider = (Slider)this.pantalla.GetChildByName("sliderTemperatura");
+            text.Text = "Temperatura: " + temp;
+            slider.Value = Double.Parse(temp);
+            Glide.MainWindow = pantalla;
         }
 
         void ethernetJ11D_NetworkUp(GTM.Module.NetworkModule sender, GTM.Module.NetworkModule.NetworkState state)
@@ -83,7 +91,6 @@ namespace Practica4DSCC
             Debug.Print("entra ethernetJ11D_NetworkUp");
             //initialize_ethernet();
             this.btn_inicio.Enabled = true;
-            //this.iniciarWindow.
             TextBlock text = (TextBlock)this.iniciarWindow.GetChildByName("text_net_status");
             text.Text = ethernetJ11D.NetworkSettings.IPAddress;
             Glide.MainWindow = iniciarWindow;
@@ -108,6 +115,7 @@ namespace Practica4DSCC
         void btn_inicio_TapEvent(object sender)
         {
             Debug.Print("Iniciar");
+            Glide.MainWindow = pantalla;
             this.timerRest.Start();
         }
     }

@@ -133,4 +133,13 @@
   <data name="small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\small.tinyfnt;System.Byte[], mscorlib, Culture=neutral, PublicKeyToken=null</value>
   </data>
+  <data name="pantalla" xml:space="preserve">
+    <value>&lt;Glide Version="1.0.7"&gt;
+  &lt;Window Name="pantalla" Width="320" Height="240" BackColor="FFFFFF"&gt;
+    &lt;Slider Name="sliderTemperatura" X="63" Y="91" Width="200" Height="30" Alpha="255" Direction="horizontal" SnapInterval="2" TickInterval="10" TickColor="000000" KnobSize="20" Minimum="0" Maximum="100" Value="0"/&gt;
+    &lt;TextBlock Name="txtTitulo" X="115" Y="18" Width="100" Height="32" Alpha="255" Text="TextBlock" TextAlign="Left" TextVerticalAlign="Top" Font="4" FontColor="0" BackColor="000000" ShowBackColor="False"/&gt;
+  &lt;/Window&gt;
+&lt;/Glide&gt;</value>
+    <comment>ventana temperatura</comment>
+  </data>
 </root>
