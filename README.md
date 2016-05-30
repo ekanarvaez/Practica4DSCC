@@ -10,5 +10,7 @@ Este código debe de ser usado como guía y comienzo en la **Práctica 4: Intern
 * Proveer al profesor un enlace a la versión modificada de este repositorio presente en su cuenta personal.
 
 # Integrantes
-Fecha:
-* ??
+Fecha: 30 de Mayo 2016
+
+- Luiggy Zerega 
+- Erika Narvaez
