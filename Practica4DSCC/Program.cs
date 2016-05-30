@@ -25,7 +25,6 @@ namespace Practica4DSCC
         //Objetos de interface gráfica GLIDE
         private GHI.Glide.Display.Window iniciarWindow;
         private Button btn_inicio;
-        private bool activeInternet = false;
         HttpRequest request;
         GT.Timer timerRest;
 
@@ -71,7 +70,7 @@ namespace Practica4DSCC
 
         void timerRest_Tick(GT.Timer timer)
         {
-            
+            request.SendRequest();
         }
 
         void request_ResponseReceived(HttpRequest sender, HttpResponse response)
@@ -83,18 +82,20 @@ namespace Practica4DSCC
         {
             Debug.Print("entra ethernetJ11D_NetworkUp");
             //initialize_ethernet();
-            this.activeInternet = true;
             this.btn_inicio.Enabled = true;
             //this.iniciarWindow.
-            //TextBlock text = (TextBlock)controlWindow.GetChildByName("status");
-            this.btn_inicio.Text = ethernetJ11D.NetworkSettings.IPAddress;
+            TextBlock text = (TextBlock)this.iniciarWindow.GetChildByName("text_net_status");
+            text.Text = ethernetJ11D.NetworkSettings.IPAddress;
+            Glide.MainWindow = iniciarWindow;
         }
 
         void ethernetJ11D_NetworkDown(GTM.Module.NetworkModule sender, GTM.Module.NetworkModule.NetworkState state)
         {
             Debug.Print("no entra ethernetJ11D_NetworkDown");
-            this.activeInternet = false;
+            TextBlock text = (TextBlock)this.iniciarWindow.GetChildByName("text_net_status");
+            text.Text = "No networking";
             this.btn_inicio.Enabled = true;
+            Glide.MainWindow = iniciarWindow;
         }
 
         void initialize_ethernet()
@@ -107,6 +108,7 @@ namespace Practica4DSCC
         void btn_inicio_TapEvent(object sender)
         {
             Debug.Print("Iniciar");
+            this.timerRest.Start();
         }
     }
 }
