@@ -24,6 +24,7 @@ namespace Practica4DSCC
     {
         //Objetos de interface gráfica GLIDE
         private GHI.Glide.Display.Window iniciarWindow;
+        private static int contador = 0;
         private GHI.Glide.Display.Window pantalla;
         private Button btn_inicio;
         HttpRequest request;
@@ -48,10 +49,9 @@ namespace Practica4DSCC
 
             // Use Debug.Print to show messages in Visual Studio's "Output" window during debugging.
             Debug.Print("Program Started");
-            this.timerRest = new GT.Timer(20000);
+            this.timerRest = new GT.Timer(5000);
             this.timerRest.Tick += timerRest_Tick;
-            request = HttpHelper.CreateHttpGetRequest("http://api.thingspeak.com/channels/120875/field/1/last");
-            request.ResponseReceived += request_ResponseReceived;
+            
             //Carga la ventana principal
             iniciarWindow = GlideLoader.LoadWindow(Resources.GetString(Resources.StringResources.inicioWindow));
             pantalla = GlideLoader.LoadWindow(Resources.GetString(Resources.StringResources.pantalla));
@@ -72,17 +72,22 @@ namespace Practica4DSCC
 
         void timerRest_Tick(GT.Timer timer)
         {
-            Debug.Print("Hola");
+            contador++;
+            Debug.Print("" + contador);
+            request = HttpHelper.CreateHttpGetRequest("http://184.106.153.149/channels/120875/field/1/last");
+            request.ResponseReceived += request_ResponseReceived;
             request.SendRequest();
         }
 
         void request_ResponseReceived(HttpRequest sender, HttpResponse response)
         {
             String temp = response.Text;
+            Double t = Double.Parse(temp);
+            Debug.Print("" + t);
             TextBlock text = (TextBlock)this.pantalla.GetChildByName("txtTitulo");
             Slider slider = (Slider)this.pantalla.GetChildByName("sliderTemperatura");
-            text.Text = "Temperatura: " + temp;
-            slider.Value = Double.Parse(temp);
+            text.Text = "" + t;
+            slider.Value = t;
             Glide.MainWindow = pantalla;
         }
 
@@ -101,8 +106,9 @@ namespace Practica4DSCC
             Debug.Print("no entra ethernetJ11D_NetworkDown");
             TextBlock text = (TextBlock)this.iniciarWindow.GetChildByName("text_net_status");
             text.Text = "No networking";
-            this.btn_inicio.Enabled = true;
+            this.btn_inicio.Enabled = false;
             Glide.MainWindow = iniciarWindow;
+            this.timerRest.Stop();
         }
 
         void initialize_ethernet()
